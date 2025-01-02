@@ -117,7 +117,7 @@ echo "... original configuration files backed up."
 
 # Copy over defaults from github package
 sudo cp ./setup/base_configs/kea-dhcp4.conf "$DHCP4_CONFIG_FILE"
-sudo cp ./setup/base-configs/kea-ctrl-agent.conf "$CTRL_CONFIG_FILE"
+sudo cp ./setup/base_configs/kea-ctrl-agent.conf "$CTRL_CONFIG_FILE"
 
 # Inform the user
 echo "... base configuration templates copied."
