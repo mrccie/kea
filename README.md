@@ -2,31 +2,27 @@
 
 Author: mrccie
 
-Copyright: 2020, mrccie
+Copyright: 2025, mrccie
 
-Date: 21-SEP-2020
+Date: 1-JAN-2025
 
 Version: 1.0
 
 
 ## PURPOSE
 
-rpi-7seg-clock is a package designed to drive a 7-segment clock (and, optionally, a digital light sensor) with a Raspberry Pi.  Hopefully this package will let you focus on what's important (cool looking cases) and offload what isn't (the mundane software).
-
-This package will also enable a (very ugly and very basic) web server on the Raspberry Pi that enables you to customize clock settings and even reboot/shut down the Pi.
+This package is designed to enable automatic deployment of a kea dhcp server system in a home/prosumer network. DHCP is important but should only be at the forefront of your thoughts if you want it to be.
 
 
 ## System Requirements
 
 This solution has been tested on the following hardware:
-- Platform: Raspberry Pi 3B+, Raspberry Pi Zero
-- OS: Rasbian 10 (buster)
-- Clock Display: [Adafruit 1.2" 4-Digit 7-Segment Display w/ I2C Backpack](https://www.adafruit.com/product/1270) (available in multiple colors)
-- [Digital Light Sensor](https://www.amazon.com/gp/product/B00NLA4D4U/ref=ppx_yo_dt_b_asin_title_o02_s01?ie=UTF8&psc=1) (optional)
+- Platform: VM (4x vCPU, 4GB RAM, 24GB Disk) [moving to RPi after initial testing]
+- OS: Ubuntu 24.04
 
 Note:
-- Some soldering is required for the 7-segment display and backpack
-- Any digital light sensor should work; there's nothing special about the one linked
+- Resource utilization is nearly non-existent for a small network
+- The installation notes below should not be used.  They pertain generally to a Raspberry Pi and will be updated as testing proceeds
 
 
 ## Raspberry Pi Initialization
@@ -75,16 +71,6 @@ Pre-requisites:
 - Terminal access to the Pi (local or via SSH)
 - RECOMMENDED: Configure the Pi with a static IP for web reachability
 
-Enable i2c Interface:
-```sh
-sudo raspi-config
-> 3 - Interfacing Options
->> P5 - I2C
->>> Would you like to enable... Yes
->>>> Finish
-```
-(You may receive an error like 'modprobe: FATAL: Module i2c-dev not found in directory /lib/modules/5.4.83+'; this can be ignored)
-
 Install git:
 ```sh
 sudo apt-get install -y git
@@ -107,12 +93,12 @@ cd git
 
 Clone this repository:
 ```sh
-git clone https://github.com/mrccie/rpi-7seg-clock
+git clone https://github.com/mrccie/kea
 ```
 
 Go into the repository directory:
 ```sh
-cd rpi-7seg-clock
+cd kea
 ```
 
 Use the install script:
