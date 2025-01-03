@@ -166,7 +166,7 @@ sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts
 
 
 # Copy files
-sudo cp ./setup/scripts/config_* "$ADMIN_DIR"/config_scripts
+sudo cp ./setup/scripts/configure_* "$ADMIN_DIR"/config_scripts
 sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts/*
 
 
