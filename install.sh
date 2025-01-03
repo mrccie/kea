@@ -166,7 +166,12 @@ sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts
 
 
 # Copy files
+sudo cp ./setup/scripts/restart_services.sh "$ADMIN_DIR"
+sudo cp ./setup/scripts/view_leases.sh "$ADMIN_DIR"
 sudo cp ./setup/scripts/configure_* "$ADMIN_DIR"/config_scripts
+
+# Change file ownership
+sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/*
 sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts/*
 
 
