@@ -165,6 +165,11 @@ sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"
 sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts
 
 
+# Copy files
+sudo cp ./setup/scripts/config_* "$ADMIN_DIR"/config_scripts
+sudo chown "$ADMIN_DIR_USER":"$ADMIN_DIR_USER" "$ADMIN_DIR"/config_scripts/*
+
+
 # Add symlinks for easier navigation
 mkdir "$ADMIN_DIR"/server_config
 sudo ln -s /etc/kea/kea-dhcp4.conf "$ADMIN_DIR"/server_config/kea-dhcp4.conf
