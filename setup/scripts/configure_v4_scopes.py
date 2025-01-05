@@ -310,6 +310,82 @@ def fn_read_configuration():
 
 
 
+# Function: fn_is_v4_subnet( v4_net ):
+#   Checks a string to see if it represents a valid subnet with a format
+#   of x.x.x.x/nn.  If the string is not formatted properly the function
+#   will return information about what is wrong.
+#
+#   version 1.0
+def fn_is_v4_subnet( v4_net ):
+
+    #### Local Variables ####
+    valid_or_not = False
+    slash_split = ""
+    mask = 0
+    network_list = []   # str list
+    octet_list = []     # int list
+
+
+    #### Validate Format of Network Mask ####
+    slash_split = v4_net.split("/")
+    if len(slash_split) != 2:
+        return("Network mask not present or not formatted correctly. Try again.")
+    try:
+        mask = int(slash_split[1])
+        if mask >= 0 and mask <= 32:
+            pass
+        else:
+            return("Network mask must be between 0 and 32. Try again.")
+    except ValueError:
+        return("Network mask is not a number. Try again.")
+
+
+    #### Validate Format of Network Component ####
+    network_list = slash_split[0].split(".")
+    if len(network_list) != 4:
+        return("Network not properly formatted. Try again.")
+    for octet in network_list:
+        try:
+            octet = int(octet)
+            if octet >= 0 and octet <= 255:
+                octet_list.append( octet )
+                pass
+            else:
+                return("Network octet out of range. Try again.")
+        except ValueError:
+            return("Network octet not a number. Try again.")
+
+
+    #### Validate that the Subnet Mask Applies Correctly ####
+    for octet in octet_list:
+        if mask == 0:       # No bits in octet are masked
+            if octet > 0:
+                return ("Network definition includes host bits. Try again.")
+            else:
+                pass
+        elif mask >= 8:     # All bits in octet are masked
+            mask -= 8
+        else:   # Some number of bits in this octet are masked
+            bit = 7
+            while mask > 0:
+                bit_value = 2**bit
+                if octet >= bit_value:
+                    octet -= bit_value
+                mask -= 1
+                bit -= 1
+            if octet > 0:
+                return("Network definition includes host bits. Try again.")
+            else:
+                pass
+            
+
+    valid_or_not = True
+
+    return valid_or_not
+
+
+
+
 ###############################################################################
 #                     KEA - Script Purpose Functions                          #
 ###############################################################################
@@ -389,6 +465,139 @@ def fn_print_dhcp4_scopes():
 
 
 
+# Function: fn_add_dhcp4_scope()
+#  Adds a scope as requested by the user.
+#
+#  version 1.0
+def fn_add_dhcp4_scope():
+
+    #### Global Variables ####
+    global g_dhcp4_dic
+    global g_dhcp4_file
+
+
+    #### Local Variables ####
+    existing_ids = []
+    existing_nets = []
+    next_scope_id = ""
+    user_input = ""
+    input_id = 0
+    input_net = ""
+    added_scope_dic = {}
+
+
+    #### Print Existing Scope List ####
+    print()
+    print("***** ACTIVE MODE: ADD v4 SCOPE *****")
+    fn_print_dhcp4_scopes()
+
+    
+    #### Get List of All Existing Scopes and IDs ####
+    for scope in g_dhcp4_dic["Dhcp4"]["subnet4"]:
+        existing_ids.append( scope["id"] )
+        existing_nets.append( scope["subnet"] )
+
+
+    #### Identify Next Available Scope ID ####
+    i = 1
+    while True:
+        if i in existing_ids:
+            i += 1
+        else:
+            next_scope_id = i
+            break
+
+
+    #### Get New Scope ID From User ####
+    while True:
+
+        user_input = input(f"Enter an ID number for the new scope (#, or 'c' to cancel): [{next_scope_id}] ")
+        if user_input == "c":
+            return
+
+        elif user_input == "":
+            input_id = next_scope_id
+            break
+
+        else:
+            try:
+                input_id = int( user_input )
+                if input_id > 0 and input_id < 4294967295:
+                    if input_id not in existing_ids:
+                        break
+                    else:
+                        print("Identifiers must be unique. Select one not currently in use.")
+                else:
+                    print("Identifiers must be greater than 0 and less than 4294967295.")
+
+            except ValueError:
+                print("Invalid input. Please enter a number or hit 'enter' to accept a default value.")
+
+
+    #### Get New Scope Subnet From User ####
+    while True:
+
+        user_input = input("Enter a new subnet (x.x.x.x/nn, or 'c' to cancel): ")
+        if user_input == "c":
+            return
+
+        elif user_input in existing_nets:
+            print("Cannot add a network that already exists. Try again or cancel.")
+
+        else:
+            is_v4_subnet = fn_is_v4_subnet(user_input)
+
+            if is_v4_subnet == True:
+                input_net = user_input
+                break
+            else:
+                print(f"{is_v4_subnet}")
+
+
+    #### Confirm User Choice ####
+    print()
+    print(f"You are proposing to add the scope:")
+    print(f"\tID   Subnet")
+    print(f"\t{input_id}    {input_net}")
+    print()
+    
+
+    while True:
+
+        user_confirm = input("Are you SURE you want to continue (y/n)? ")
+        print()
+
+        if user_confirm.lower().startswith("y"):
+            printl(f" Adding scope (ID={input_id}) (Subnet={input_net})")
+            break
+        elif user_confirm.lower().startswith("n"):
+            print("You have selected to cancel. Returning to main menu.")
+            input("Press return to continue.")
+            return
+        else:
+            print("Input not 'y' or 'n'. Try again.")
+            print()
+
+
+    #### Add The Scope ####
+    added_scope_dic["id"] = input_id
+    added_scope_dic["subnet"] = input_net
+    g_dhcp4_dic["Dhcp4"]["subnet4"].append( added_scope_dic )
+
+    print("xxxxxxxxxxx WRITING CHANGES DISABLED -- UNCOMMENT TO ENABLE")
+    #fn_write_dic_to_json( g_dhcp4_dic, g_dhcp4_file )
+
+
+    #### Inform The User ####
+    print("Scope successfully added")
+    input("Press return to continue to main menu.")
+
+
+    return
+
+
+
+
 # Function: fn_delete_dhcp4_scope()
 #  Deletes scopes as requested by the user.
 #
@@ -409,10 +618,9 @@ def fn_delete_dhcp4_scope():
     user_confirm = ""
 
 
-    #### Print Choices ####
+    #### Print Existing Scope List ####
     print()
-    print()
-    print("***** ACTIVE MODE: DELETE SCOPE *****")
+    print("***** ACTIVE MODE: DELETE v4 SCOPE *****")
     fn_print_dhcp4_scopes()
 
 
@@ -465,102 +673,16 @@ def fn_delete_dhcp4_scope():
     for scope in g_dhcp4_dic["Dhcp4"]["subnet4"]:
         if user_choice == str(scope["id"]):
             del g_dhcp4_dic["Dhcp4"]["subnet4"][i]
-            print("xxxxxxxxxxx MAKING CHANGES DISABLED -- UNCOMMENT TO ENABLE")
+            print("xxxxxxxxxxx WRITING CHANGES DISABLED -- UNCOMMENT TO ENABLE")
             #fn_write_dic_to_json( g_dhcp4_dic, g_dhcp4_file )
         else:
             i += 1
 
 
     #### Inform The User ####
-    print("Scope successfully deleted. Returning to main menu.")
-    print()
+    print("Scope successfully deleted.")
+    input("Press return to continue to main menu.")
 
-
-    return
-
-
-
-
-# Function: fn_select_interfaces( iface_dic )
-#   Collects all of the interfaces and associated IP addresses
-#   on a system into a dictionary, which is returned.
-#
-#   version 1.0
-def fn_select_interfaces( iface_dic ):
-
-    #### Local Variables ####
-    run_outer = True
-    run_inner = True
-    choice_dic = {}
-
-
-    #### Get User Selections ####
-
-    # Main Loop
-    while run_outer:
-
-        run_inner = True
-
-        print()
-        print("The following interfaces are installed on this system:")
-        print()
-        choice_dic = fn_print_dhcp4_choices( iface_dic )
-
-
-        while run_inner:
-
-            user_input = input("Select an interface to toggle (#, p=print, d=done): ").lower()
-
-            if user_input in ("p", "print"):
-                run_inner = False
-                continue
-
-            elif user_input in ("d", "done"):
-                run_inner = False
-                run_outer = False
-                continue
-
-            elif user_input in choice_dic.keys():
-                print(f"You selected {choice_dic[user_input]}")
-                toggle_iface = choice_dic[user_input]
-                if iface_dic[toggle_iface]["dhcp4_enabled"] == "Yes":
-                    iface_dic[toggle_iface]["dhcp4_enabled"] = "No*"
-                elif iface_dic[toggle_iface]["dhcp4_enabled"] == "Yes*":
-                    iface_dic[toggle_iface]["dhcp4_enabled"] = "No"
-                elif iface_dic[toggle_iface]["dhcp4_enabled"] == "No":
-                    iface_dic[toggle_iface]["dhcp4_enabled"] = "Yes*"
-                elif iface_dic[toggle_iface]["dhcp4_enabled"] == "No*":
-                    iface_dic[toggle_iface]["dhcp4_enabled"] = "Yes"
-                else:
-                    printl("CRIT - Exception hit in fn_select_interfaces. Quitting.")
-                    print("CRIT - Exception hit in fn_select_interfaces. Quitting.")
-                    quit()
-
-            else:
-                print(f"Command not a valid number, 'd' or 'p'. Try again.")
-
-
-    #### Confirm User Choices ####
-
-    print()
-    print()
-    print("You have selected to listen on the following interfaces:")
-    print()
-
-    while True:
-
-        # Print table for user
-        choice_dic = fn_print_dhcp4_choices( iface_dic )
-
-        # Get user choice
-        user_input = input("Do you want to confirm this choice? (yes/no): ").lower()
-        if user_input.lower().startswith("y"):
-            return iface_dic
-
-
-        elif user_input.lower().startswith("n"):
-            print("You elected not to make any changes. Aborting.")
-            quit()
 
     return
 
@@ -585,18 +707,30 @@ else:
 fn_read_configuration()
 
 
+clear_screen = True
 while True:
+    if clear_screen == True:
+        os.system("clear")
+
     scope_action = fn_print_main_scope_menu()
+
     if scope_action == "a":     # Add Scope
-        pass
+        os.system("clear")
+        fn_add_dhcp4_scope()
+        clear_screen = True
+
     elif scope_action == "d":   # Delete Scope
+        os.system("clear")
         fn_delete_dhcp4_scope()
+        clear_screen = True
 
     elif scope_action == "m":   # Modify Scope
         pass
 
     elif scope_action == "p":   # Print Scopes
+        os.system("clear")
         fn_print_dhcp4_scopes()
+        clear_screen = False
 
     elif scope_action == "q":   # Quit
         printl(" User selected 'quit'. Terminating.")
@@ -606,14 +740,8 @@ while True:
 
 quit()
 
-# Collect information about all existing interfaces
-#iface_dic = fn_get_interface_info()
 
-# Correlate running config and interfae information
-#iface_dic = fn_correlate_ifaces( iface_dic )
 
-# Get the user to select interfaces to run dhcpv4 on
-#iface_dic = fn_select_interfaces( iface_dic )
 
 
 #### Make the changes ####
