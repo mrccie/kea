@@ -393,7 +393,7 @@ def fn_is_v4_subnet( v4_net ):
 # Function: fn_print_scope_menu()
 #   Allows the user to pick between the main options in this script/
 #
-#   version 1.0
+#   version 1.01
 def fn_print_main_scope_menu():
 
     #### Local Variables ####
@@ -403,11 +403,11 @@ def fn_print_main_scope_menu():
     print()
     print("What scope changes would you like to make?")
     print()
-    print("\ta.   Add Scope")
-    print("\td.   Delete Scope")
-    print("\tm.   Modify Scope")
-    print("\tp.   Print Scopes")
-    print("\tq.   Quit")
+    print("\ta.  Add Scope")
+    print("\td.  Delete Scope")
+    print("\tm.  Modify Scope")
+    print("\tp.  Print Scopes")
+    print("\tq.  Quit")
     print()
 
     #### Get User Choice ####
@@ -584,8 +584,7 @@ def fn_add_dhcp4_scope():
     added_scope_dic["subnet"] = input_net
     g_dhcp4_dic["Dhcp4"]["subnet4"].append( added_scope_dic )
 
-    print("xxxxxxxxxxx WRITING CHANGES DISABLED -- UNCOMMENT TO ENABLE")
-    #fn_write_dic_to_json( g_dhcp4_dic, g_dhcp4_file )
+    fn_write_dic_to_json( g_dhcp4_dic, g_dhcp4_file )
 
 
     #### Inform The User ####
@@ -689,6 +688,190 @@ def fn_delete_dhcp4_scope():
 
 
 
+# Function: fn_modify_main_menu_v4()
+#   Displays a menu of available scope modifications for an IPv4 scope.
+#
+#   version 1.0
+def fn_modify_scope_main_menu_v4():
+
+    #### Global Variables ####
+    global g_dhcp4_dic
+
+
+    #### Local Variables ####
+    need_choice = True
+    user_choice = ""
+    scope_id = 0
+
+    
+    #### Print Existing Scope List ####
+    print()
+    print("***** ACTIVE MODE: MODIFY v4 SCOPE *****")
+    fn_print_dhcp4_scopes()
+
+
+    #### Get User Choice ####
+    while need_choice == True:
+
+        user_choice = input("Enter ID # of scope to modify (#, or 'c' to cancel): ")
+
+        if user_choice.lower().startswith("c"):
+            print("You have selected to cancel. Returning to main menu.")
+            return
+        else:
+            pass
+
+        for scope in g_dhcp4_dic["Dhcp4"]["subnet4"]:
+            if user_choice == str(scope["id"]):
+                scope_id = int(user_choice)
+                need_choice = False
+                break
+            else:
+                pass
+
+        if need_choice == True:
+            print("Input not an ID number or 'c'. Try again.")
+        else:
+            pass
+
+
+    #### Pass Off The Choice
+    fn_modify_scope_menu( scope_id )
+
+
+    return
+
+
+
+
+# Function: fn_modify_scope_menu( scope_id )
+#    Presents a menu of options for things to update in an existing scope
+#
+#    version: 1.0
+def fn_modify_scope_menu( scope_id ):
+
+    #### Global Variables ####
+    global g_dhcp4_dic
+
+
+    #### Local Variables ####
+    scope_net = ""
+
+
+    #### Inform User of Scope Being Impacted ####
+    for scope in g_dhcp4_dic["Dhcp4"]["subnet4"]:
+        if scope["id"] == scope_id:
+            scope_net = scope["subnet"]
+        else:
+            pass
+
+    ##########################
+    #   Tap Out Early - Work Not Done Yet
+    #
+        print()
+        print("This module has not been completed yet. Returning to main menu.")
+        input("Press return to continue.")
+        return
+    #
+    #
+    ##########################
+
+    os.system("clear")
+    print()
+    print(f"***** MODIFYING SCOPE: {scope_net} (ID: {scope_id}) *****")
+    print()
+
+
+    #### Print Choices ####
+    print()
+    print("What changes would you like to make?")
+    print()
+    print("\ta.  Modify Address Pool")
+    print("\to.  Modify Scope Options")
+    print("\tr.  Add Reservation")
+    print("\tx.  Delete Reservation")
+    print("\tq.  Quit")
+    print()
+
+    #### Get User Choice ####
+    while True:
+        user_choice = input("Selection (a/d/m/p/q): ")
+
+        if user_choice.lower().startswith("a"):
+            user_choice = "a"
+            fn_modify_v4_address_pool( scope_id )
+
+        elif user_choice.lower().startswith("o"):
+            user_choice = "o"
+
+        elif user_choice.lower().startswith("r"):
+            user_choice = "r"
+
+        elif user_choice.lower().startswith("x"):
+            user_choice = "x"
+
+        elif user_choice.lower().startswith("q"):
+            user_choice = "q"
+            break
+        else:
+            print("Please choose 'a', 'o', 'r', 'x', or 'q'.")
+
+    return
+
+
+
+
+# Function: fn_modify_v4_address_pool( scope_id )
+#   This function will print the existing address pools for a given scope and
+#   invite the user to add or delete one of them.
+#
+#   version 1.0
+def fn_modify_v4_address_pool( scope_id ):
+
+    #### Global Variables ####
+    global g_dhcp4_dic
+
+    #### Local Variables ####
+    has_pool = True
+    user_choice
+
+    #### Print Existing Scopes ####
+    print()
+    print("The following address pools are active for this scope:")
+    print()
+    print(f"\tID    Pool")
+    index = 0
+    for scope in g_dhcp4_dic["Dhcp4"]["subnet4"]:
+        if scope["id"] == scope_id:
+            try:
+                for pool in scope["pools"]:
+                    print(f"\t{index}     {pool['pool']}")
+                    print()
+            except:
+                print("This scope has no pools.")
+                has_pool = False
+            break
+
+    #### Get User Activity Choice ####
+    while True:
+        if has_pool == True:
+            user_choice = input("Would you like to (a)dd a scope, (d)elete a scope, or (q)uit? ")
+
+            if user_choice.lower().startswith("a"):
+                user_choice = "a"
+                
+            elif user_choice.lower().startswith("d"):
+                user_choice = "d"
+
+            elif user_choice.lower().startswith("q"):
+                user_choice = "q"
+
+    
+    return
+
+
+
+
 ###############################################################################
 #                           KEA - Main Execution                              #
 ###############################################################################
@@ -725,7 +908,9 @@ while True:
         clear_screen = True
 
     elif scope_action == "m":   # Modify Scope
-        pass
+        os.system("clear")
+        fn_modify_scope_main_menu_v4()
+        clear_screen = True
 
     elif scope_action == "p":   # Print Scopes
         os.system("clear")
