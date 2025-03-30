@@ -31,28 +31,92 @@ If you're installing on a Pi from scratch, you'll need to do a few things first.
 
 [Steps to set up a headless RPi](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html)
 
-(Optional but Recommended Step)
-[You can also set a static IP](https://www.raspberrypi.org/documentation/configuration/tcpip/).  
-An example would be to modify the file <b>/etc/dhcpcd.conf</b> to read as follows (for a wireless connection):
+### (Optional but Strongly Recommended Step) Set a Static IP
+
+Run the following command to list the available network interfaces:
 ```sh
-interface wlan0
-static ip_address=192.168.1.50/24    
-static routers=192.168.1.1
-static domain_name_servers=208.67.220.220 8.8.8.8
+ip address
 ```
 
-Change the password of the user 'pi' if you haven't done so already:
+You'll see output like the below. In this example, ens18 is the interface name (yours may be different).
+```sh
+2: ens18: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic ens18
+```
+
+Edit or create a new file in /etc/systemd/network/ for the interface:
+```sh
+sudo vim /etc/systemd/network/10-static.network
+```
+
+Add the following configuration (updated for your system):
+```sh
+[Match]
+Name=ens18
+
+[Network]
+Address=192.168.2.7/24
+Gateway=192.168.2.1
+DNS=8.8.8.8 8.8.4.4
+```
+
+Run the following commands to enabe systemd-networkd and apply the changes:
+```sh
+sudo systemctl restart systemd-networkd
+sudo systemctl enable systemd-networkd
+```
+
+Verify the new IP configuration with:
+```sh
+ip address
+```
+
+
+### (Optional) Disable Unused Interfaces (e.g. redundant WiFi interfaces)
+
+Run the following command to list the available network interfaces:
+```sh
+ip address
+```
+
+You'll see output like the below. In this example, wlan0 is the interface name (yours may be different).
+```sh
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DORMANT group default qlen 1000
+    link/ether d8:3a:dd:89:ab:d1 brd ff:ff:ff:ff:ff:ff
+```
+
+Disable the interface permanently by first creating a .network file to ignore the wireless interface:
+```sh
+sudo vim /etc/systemd/network/99-disable-wifi.network
+```
+
+Add to it:
+```sh
+[Match]
+Name=wlan0
+
+[Link]
+Unmanaged=yes
+```
+
+Restart networking:
+```sh
+sudo systemctl restart systemd-networkd
+```
+
+
+### Change the password of the user 'pi' if you haven't done so already:
 ```sh
 passwd
 ```
 
-Update the operating system:
+### Update the operating system:
 ```sh
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
-Set your local timezone:
+### Set your local timezone:
 ```sh
 sudo raspi-config
 > 5 - Localization Options
