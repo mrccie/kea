@@ -87,7 +87,7 @@ You'll see output like the below. In this example, wlan0 is the interface name (
 
 Disable the interface permanently by first creating a .network file to ignore the wireless interface:
 ```sh
-sudo vim /etc/systemd/network/99-disable-wifi.network
+sudo vim /etc/systemd/network/90-disable-wifi.network
 ```
 
 Add to it:
