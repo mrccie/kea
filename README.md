@@ -74,17 +74,6 @@ ip address
 
 ### (Optional) Disable WiFi (assuming a Raspberry Pi with an ethernet connection)
 
-Run the following command to list the available network interfaces:
-```sh
-ip address
-```
-
-You'll see output like the below. In this example, wlan0 is the interface name (yours may be different).
-```sh
-3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DORMANT group default qlen 1000
-    link/ether d8:3a:dd:89:ab:d1 brd ff:ff:ff:ff:ff:ff
-```
-
 Edit the following file:
 ```sh
 sudo vim /boot/firmware/config.txt
