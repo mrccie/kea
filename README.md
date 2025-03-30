@@ -72,7 +72,7 @@ ip address
 ```
 
 
-### (Optional) Disable Unused Interfaces (e.g. redundant WiFi interfaces)
+### (Optional) Disable WiFi (assuming a Raspberry Pi with an ethernet connection)
 
 Run the following command to list the available network interfaces:
 ```sh
@@ -85,23 +85,19 @@ You'll see output like the below. In this example, wlan0 is the interface name (
     link/ether d8:3a:dd:89:ab:d1 brd ff:ff:ff:ff:ff:ff
 ```
 
-Disable the interface permanently by first creating a .network file to ignore the wireless interface:
+Edit the following file:
 ```sh
-sudo vim /etc/systemd/network/90-disable-wifi.network
+sudo vim /boot/firmware/config.txt
 ```
 
 Add to it:
 ```sh
-[Match]
-Name=wlan0
-
-[Link]
-Unmanaged=yes
+dtoverlay=disable-wifi
 ```
 
-Restart networking:
+Restar the system:
 ```sh
-sudo systemctl restart systemd-networkd
+sudo shutdown -r now
 ```
 
 
