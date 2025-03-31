@@ -188,3 +188,5 @@ sudo ./install.sh
 ## What to Do Next?
 
 There are a few tools built into ~/kea_tools.  Navigate there and check them out.  If they don't do enough for you, Google is your friend!
+
+Note: If you want to accept this scripts default API username and password, you can simply edit the "view_leases.sh" file to remove the "info" section, as the defaults are already loaded.
