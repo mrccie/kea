@@ -196,9 +196,13 @@ echo "... done."
 
 # Inform the user
 echo ""
-echo "Installing python3-netifaces, which is only needed for an optional configuration script..."
+echo "Installing modules for post-setup helper scripts..."
 
+# Install python3-netifaces
 sudo apt install -y python3-netifaces
+
+# Install jq
+sudo apt install -y jq
 
 # Wrap up this section
 echo "... done."
