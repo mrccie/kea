@@ -61,7 +61,7 @@ Name=eth0
 [Network]
 Address=192.168.2.7/24
 Gateway=192.168.2.1
-DNS=4.2.2.4 8.8.4.4
+DNS=4.2.2.4 8.8.8.8
 ```
 
 Run the following commands to enabe systemd-networkd and apply the changes:
