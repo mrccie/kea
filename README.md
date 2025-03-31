@@ -4,7 +4,7 @@ Author: mrccie
 
 Copyright: 2025, mrccie
 
-Date: 1-JAN-2025
+Date: 31-MAR-2025
 
 Version: 1.0
 
@@ -31,7 +31,7 @@ If you're installing on a Pi from scratch, you'll need to do a few things first.
 
 [Steps to set up a headless RPi](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html)
 
-### (Optional but Strongly Recommended Step) Set a Static IP
+### (Optional but Strongly Recommended Step) Set a Static IP - HEADLESS SETUP (if a GUI is in use, set it in Network Manager)
 
 Run the following command to list the available network interfaces:
 ```sh
@@ -69,6 +69,35 @@ sudo systemctl enable systemd-networkd
 Verify the new IP configuration with:
 ```sh
 ip address
+```
+
+(If You're Running a GUI-based distro as Headless...) Disable NetwokManager or it will interfere with DNS
+```sh
+sudo systemctl stop NetworkManager
+sudo systemctl disable NetworkManager
+
+sudo rm /etc/resolv.conf
+```
+
+Set up DNS manually:
+```sh
+echo "nameserver 4.2.2.4" | sudo tee /etc/resolv.conf
+echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf
+```
+
+Make sure the file can't be overwritten by marking it immutable:
+```sh
+sudo chattr +i /etc/resolv.conf
+```
+
+Restart Networking
+```sh
+sudo systemctl restart systemd-networkd
+```
+
+Validate DNS is operational:
+```sh
+ping -c 3 google.com
 ```
 
 
