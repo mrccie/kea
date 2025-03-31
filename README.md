@@ -38,10 +38,14 @@ Run the following command to list the available network interfaces:
 ip address
 ```
 
-You'll see output like the below. In this example, ens18 is the interface name (yours may be different).
+You'll see output like the below. In this example, eth0 is the interface name (yours may be different).
 ```sh
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic ens18
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether d8:3a:dd:89:ee:4c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.2.118/24 brd 192.168.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 50497sec preferred_lft 50497sec
+    inet6 fe80::e5ed:478a:a19e:548/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
 ```
 
 Edit or create a new file in /etc/systemd/network/ for the interface:
