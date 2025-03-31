@@ -40,7 +40,7 @@ ip address
 
 You'll see output like the below. In this example, ens18 is the interface name (yours may be different).
 ```sh
-2: ens18: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic ens18
 ```
 
@@ -52,7 +52,7 @@ sudo vim /etc/systemd/network/10-static.network
 Add the following configuration (updated for your system):
 ```sh
 [Match]
-Name=ens18
+Name=eth0
 
 [Network]
 Address=192.168.2.7/24
