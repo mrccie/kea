@@ -187,4 +187,4 @@ sudo ./install.sh
 
 ## What to Do Next?
 
-If you want to customize your clock beyond the default behavior (ie. change brightness scheme, set to 24-hour mode, etc.), open a web browser and navigate to the IP address of your clock.  When using the web interface, please be aware that changes you make may take a minute or so to be picked up.
+There are a few tools built into ~/kea_tools.  Navigate there and check them out.  If they don't do enough for you, Google is your friend!
