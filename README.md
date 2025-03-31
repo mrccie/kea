@@ -189,6 +189,15 @@ sudo ./install.sh
 ```
 
 
+## Known Issues
+
+If you are installing this on a Raspberry Pi rather than an x86 platform, the location of the hook libraries is different than what is in the configuration file. Solve for this by running:
+```sh
+find /usr/lib -name "libdhcp_lease_cmds.so"
+```
+Then go to the ~/kea_tools/server_config file and update the path for the libdhcp_lease_cmds.so and libdhcp_stat_cmds.so files to the directory you found.  This will likely mean updating the path to /usr/lib/aarch64-linux-gnu/kea/hooks/.
+
+
 ## What to Do Next?
 
 There are a few tools built into ~/kea_tools.  Navigate there and check them out.  If they don't do enough for you, Google is your friend!
