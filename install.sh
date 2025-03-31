@@ -191,6 +191,20 @@ echo "... done."
 
 
 ###############################################################################
+#                              Kea Installation                               #
+###############################################################################
+
+# Inform the user
+echo ""
+echo "Installing python3-netifaces, which is only needed for an optional configuration script..."
+
+sudo apt install -y python3-netifaces
+
+# Wrap up this section
+echo "... done."
+
+
+###############################################################################
 #                             Finish Out                                      #
 ###############################################################################
 
