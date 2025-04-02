@@ -180,9 +180,9 @@ mkdir "$ADMIN_DIR"/server_config
 sudo ln -s /etc/kea/kea-dhcp4.conf "$ADMIN_DIR"/server_config/kea-dhcp4.conf
 sudo ln -s /etc/kea/kea-ctrl-agent.conf "$ADMIN_DIR"/server_config/kea-ctrl-agent.conf
 
-mkdir "$ADMIN_DIR"/server_logs
-sudo ln -s "$LOG_DIR"/kea-dhcp4.log "$ADMIN_DIR"/server_logs/kea-dhcp4.log
-sudo ln -s "$LOG_DIR"/kea-ctrl-agent.log "$ADMIN_DIR"/server_logs/kea-ctrl-agent.log
+mkdir "$ADMIN_DIR"/logs
+sudo ln -s "$LOG_DIR"/kea-dhcp4.log "$ADMIN_DIR"/logs/kea-dhcp4.log
+sudo ln -s "$LOG_DIR"/kea-ctrl-agent.log "$ADMIN_DIR"/logs/kea-ctrl-agent.log
 
 
 # Wrap up this section
